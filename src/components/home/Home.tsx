@@ -2,7 +2,10 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { FC } from "react";
-import styles from "/styles/Home.module.css";
+import styles from "/styles/del__Home.module.css";
+import styled from "styled-components";
+
+const StyledFr = styled.div``;
 
 const Home: FC = () => {
   return (

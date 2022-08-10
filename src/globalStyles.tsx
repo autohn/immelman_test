@@ -1,5 +1,7 @@
-html,
-body {
+import { createGlobalStyle } from "styled-components";
+
+const GlobalStyle = createGlobalStyle`
+html, body {
   padding: 0;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
@@ -24,3 +26,7 @@ a {
     background: black;
   }
 }
+
+`;
+
+export default GlobalStyle;
