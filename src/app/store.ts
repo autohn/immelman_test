@@ -1,7 +1,4 @@
-import {
-  characterdetailAPI,
-  charactersearchAPI,
-} from "../services/CharacterService";
+import { characterAPI } from "../services/CharacterService";
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import searchSlice from "./SearchReducer";
 import userSlice from "./UserReducer";
@@ -11,13 +8,10 @@ export const store = configureStore({
   reducer: {
     search: searchSlice,
     user: userSlice,
-    [characterdetailAPI.reducerPath]: characterdetailAPI.reducer,
-    [charactersearchAPI.reducerPath]: charactersearchAPI.reducer,
+    [characterAPI.reducerPath]: characterAPI.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
-      .concat(characterdetailAPI.middleware)
-      .concat(charactersearchAPI.middleware),
+    getDefaultMiddleware().concat(characterAPI.middleware),
 });
 
 export type AppDispatch = typeof store.dispatch;

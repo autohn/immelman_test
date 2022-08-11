@@ -19,32 +19,30 @@ export interface ICharacter {
   url: string;
 }
 
-export const characterdetailAPI = createApi({
-  reducerPath: "filmdetailAPI",
+export interface ICharacters {
+  count: number;
+  next: string;
+  previous: string;
+  results: Array<ICharacter>;
+}
+
+export const characterAPI = createApi({
+  reducerPath: "characterAPI",
   baseQuery: fetchBaseQuery({ baseUrl: "https://swapi.dev/api/" }),
-  tagTypes: ["Film"],
+  tagTypes: ["Character"],
   endpoints: (build) => ({
-    fetchAllFilms: build.query<ICharacter, { characterid: string }>({
+    GetCharacter: build.query<ICharacter, { characterid: string }>({
       query: ({ characterid }) => ({
         url: `/people/${characterid}`,
-        params: {},
+        /*         params: {}, */
       }),
-      providesTags: (result) => ["Film"],
+      providesTags: (result) => ["Character"],
     }),
-  }),
-});
-
-export const charactersearchAPI = createApi({
-  reducerPath: "filmdetailAPI",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://swapi.dev/api/" }),
-  tagTypes: ["Film"],
-  endpoints: (build) => ({
-    fetchAllFilms: build.query<ICharacter, { characterid: string }>({
-      query: ({ characterid }) => ({
-        url: `/people${characterid}`,
-        params: {},
+    SearchCharacters: build.query<ICharacters, { search: string }>({
+      query: ({ search }) => ({
+        url: `/people/?search=${search}`,
       }),
-      providesTags: (result) => ["Film"],
+      providesTags: (result) => ["Character"],
     }),
   }),
 });
