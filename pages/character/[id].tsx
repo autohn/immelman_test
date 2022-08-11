@@ -9,11 +9,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   /*   const paths = data.results.map((character: any) => {
     return {
-      params: { id: parseInt(character.url.replace(/[^0-9]/g, "")).toString() },
+      params: { id: character.url.replace(/[^0-9]/g, "") },
     };
   }); */
 
   const paths = Array.from(Array(10).keys(), (x) => {
+    //поставить data.count.toStering()
     return {
       params: {
         id: (x + 1).toString(),
@@ -33,10 +34,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
   return { props: { character: data } };
 };
 
-export default function PeopleId({ character }: any) {
+export default function PeopleId({ character }: { character: ICharacter }) {
   //const { query } = useRouter();
-
-  console.log(character);
 
   return <>{character.name}</>;
 }
