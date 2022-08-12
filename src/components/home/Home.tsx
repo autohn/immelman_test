@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import styled from "styled-components";
 
 const StyledH = styled.h1`
@@ -9,7 +9,12 @@ const StyledH = styled.h1`
 `;
 
 const Home: FC = () => {
-  return <StyledH>История просмотра</StyledH>;
+  const [history, historyString] = useState("");
+  useEffect(() => {
+    historyString(JSON.parse(sessionStorage.getItem("History") || "[]"));
+  }, []);
+
+  return <StyledH>История просмотра {JSON.stringify(history)} </StyledH>;
 };
 
 export default Home;

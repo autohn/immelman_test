@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { GetStaticProps } from "next";
 import { GetStaticPaths } from "next";
 import { ICharacter } from "../../src/services/CharacterService";
+import { useEffect } from "react";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const res = await fetch("https://swapi.dev/api/people/");
@@ -31,11 +32,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const res = await fetch("https://swapi.dev/api/people/" + id);
   const data = await res.json();
 
-  return { props: { character: data } };
+  return { props: { character: data, id: id } };
 };
 
 export default function PeopleId({ character }: { character: ICharacter }) {
-  //const { query } = useRouter();
-
   return <>{character.name}</>;
 }
