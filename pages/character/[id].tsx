@@ -3,6 +3,19 @@ import { GetStaticProps } from "next";
 import { GetStaticPaths } from "next";
 import { ICharacter } from "../../src/services/CharacterService";
 import { useEffect } from "react";
+import styled from "styled-components";
+import Image from "next/image";
+import { relative } from "path";
+
+const StyledContainer = styled.div`
+  text-align: center;
+`;
+
+const ImageWrap = styled.div`
+  text-align: center !important;
+  position: relative;
+  height: 225px;
+`;
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const res = await fetch("https://swapi.dev/api/people/");
@@ -23,8 +36,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     };
   });
 
-  console.log(paths);
-  return { paths, fallback: false };
+  return { paths, fallback: "blocking" };
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
@@ -32,9 +44,39 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const res = await fetch("https://swapi.dev/api/people/" + id);
   const data = await res.json();
 
+  const yandeximages = require("yandex-images");
+  yandeximages.Search(data.name, false, function (url: any) {
+    data.imgurl = url;
+  });
+  while (!data.imgurl) {
+    await new Promise((resolve) => setTimeout(resolve, 100)); //TODO как-то нормально можно?
+  }
+
   return { props: { character: data, id: id } };
 };
 
 export default function PeopleId({ character }: { character: ICharacter }) {
-  return <>{character.name}</>;
+  const imgurl = character.imgurl.includes("avatars.mds.yandex.net")
+    ? character.imgurl
+    : "/sw.png";
+
+  return (
+    <>
+      <StyledContainer>
+        {character.name}
+
+        {/*  <div style={{ position: "relative", width: "300px", height: "225px" }}> */}
+        <ImageWrap>
+          <Image
+            src={imgurl}
+            alt={character.name}
+            layout={"fill"}
+            objectFit={"contain"}
+            priority
+          />
+        </ImageWrap>
+        {/*  </div> */}
+      </StyledContainer>
+    </>
+  );
 }

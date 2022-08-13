@@ -17,6 +17,7 @@ export interface ICharacter {
   created: Date;
   edited: Date;
   url: string;
+  imgurl: string;
 }
 
 export interface ICharacters {

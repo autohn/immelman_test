@@ -9,14 +9,14 @@ import { characterAPI, ICharacters } from "../services/CharacterService";
 import { useRouter } from "next/router";
 import React, { useCallback } from "react";
 import debounce from "lodash/debounce";
+import { IHistory } from "./home/Home";
 
 const StyledContainer = styled.div`
+  margin: auto;
   text-align: center;
+  position: relative;
+  width: 40%;
 `;
-
-interface IHistory {
-  id: string;
-}
 
 type MyOptionType = { value: string; label: string };
 
@@ -88,7 +88,6 @@ export default function Header() {
 
   return (
     <StyledContainer>
-      Header
       {/*       {
         <form>
           <input
