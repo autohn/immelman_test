@@ -51,9 +51,15 @@ const customStyles = {
     border: "2px solid #fbe609",
     boxShadow: "3px solid #fbe609",
     background: "black",
+    color: "white",
     "&:hover": {
       borderColor: "white",
     },
+  }),
+
+  input: (provided: any, state: any) => ({
+    ...provided,
+    color: "#fbe609",
   }),
 
   dropdownIndicator: (provided: any, state: any) => ({

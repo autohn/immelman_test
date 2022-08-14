@@ -7,20 +7,14 @@ import Link from "next/link";
 
 const StyledContainer = styled.div`
   text-align: center;
-  white-space: nowrap;
+  padding-top: 20px;
+  break-inside: avoid;
 `;
 
 const ImageWrap = styled.div`
   text-align: center;
   position: relative;
-  height: 50px;
-`;
-
-const StyledLink = styled(Link)`
-  white-space: normal;
-  display: inline-block;
-  width: 48%;
-  vertical-align: top;
+  height: 100px;
 `;
 
 const CharacterItem: FC<IHistory> = ({ id, name, img }) => {
@@ -37,7 +31,7 @@ const CharacterItem: FC<IHistory> = ({ id, name, img }) => {
 
   return (
     <StyledContainer>
-      <StyledLink href={"/character/" + id}>
+      <Link href={"/character/" + id}>
         <a>
           <ImageWrap>
             <Image
@@ -50,7 +44,7 @@ const CharacterItem: FC<IHistory> = ({ id, name, img }) => {
           </ImageWrap>
           {name}
         </a>
-      </StyledLink>
+      </Link>
     </StyledContainer>
   );
 };

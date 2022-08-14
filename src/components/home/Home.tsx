@@ -16,6 +16,10 @@ const StyledContent = styled.div`
 `;
 
 
+const StyledCols = styled.div`
+  column-count: 3;
+`;
+
 
 
 
@@ -33,12 +37,13 @@ const Home: FC = () => {
   return (
     <>
       <StyledH>История просмотра:</StyledH>
-
-      {history.map((h: IHistory, key) => (
-        <StyledContent key={h.id}>
-          <CharacterItem  {...h} />
-        </StyledContent>
-      ))}
+        <StyledCols>
+        {history.map((h: IHistory, key) => (
+          <StyledContent key={h.id}>
+            <CharacterItem  {...h} />
+          </StyledContent>
+        ))}
+        </StyledCols>
     </>
   );
 };

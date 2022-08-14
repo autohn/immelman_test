@@ -3,9 +3,9 @@ import styled from "styled-components";
 
 const StyledContainer = styled.div`
   color: white;
-  position: sticky;
+  position: fixed;
   bottom: 0;
-  text-align: end;
+  right: 5px;
 `;
 
 export default function Footer() {
