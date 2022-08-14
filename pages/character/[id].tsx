@@ -9,13 +9,30 @@ import { relative } from "path";
 
 const StyledContainer = styled.div`
   text-align: center;
+  position: relative;
+  top: 40px;
+`;
+
+const StyledText = styled.div`
+  vertical-align: top;
+  display: inline-block;
+  text-align: left;
+  position: relative;
+  left: 10px;
 `;
 
 const ImageWrap = styled.div`
-  text-align: center !important;
+  display: inline-block;
   position: relative;
   height: 225px;
+  width: 300px;
 `;
+
+export interface IHistory {
+  id: string;
+  name: string;
+  img: string;
+}
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const res = await fetch("https://swapi.dev/api/people/");
@@ -42,7 +59,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (context) => {
   const id = context.params?.id;
   const res = await fetch("https://swapi.dev/api/people/" + id);
-  const data = await res.json();
+  const data: ICharacter = await res.json();
 
   const yandeximages = require("yandex-images");
   yandeximages.Search(data.name, false, function (url: any) {
@@ -52,20 +69,48 @@ export const getStaticProps: GetStaticProps = async (context) => {
     await new Promise((resolve) => setTimeout(resolve, 100)); //TODO как-то нормально можно?
   }
 
-  return { props: { character: data, id: id } };
+  const homeworldres = await fetch(data.homeworld);
+  const homeworld = await homeworldres.json();
+  data.homeworld = homeworld.name;
+
+  return {
+    props: { character: data, id: id },
+    revalidate: 300,
+    notFound: data.name ? false : true,
+  };
 };
 
-export default function PeopleId({ character }: { character: ICharacter }) {
+export default function PeopleId({
+  character,
+  id,
+}: {
+  character: ICharacter;
+  id: string;
+}) {
   const imgurl = character.imgurl.includes("avatars.mds.yandex.net")
     ? character.imgurl
-    : "/sw.png";
+    : "/sw_big.png";
+
+  //const router = useRouter();
+  //let sv = router.query.id;
+
+  useEffect(() => {
+    let History: IHistory[] = JSON.parse(
+      sessionStorage.getItem("History") || "[]"
+    );
+
+    if (!History.find((x) => x.id == id)) {
+      History.push({ id: id, name: character.name, img: character.imgurl });
+    }
+
+    sessionStorage.setItem("History", JSON.stringify(History));
+  }, [character.imgurl, character.name, id]);
 
   return (
     <>
       <StyledContainer>
-        {character.name}
-
         {/*  <div style={{ position: "relative", width: "300px", height: "225px" }}> */}
+
         <ImageWrap>
           <Image
             src={imgurl}
@@ -76,6 +121,12 @@ export default function PeopleId({ character }: { character: ICharacter }) {
           />
         </ImageWrap>
         {/*  </div> */}
+
+        <StyledText>
+          <p>Имя: {character.name}</p>
+          <p>Год рождения: {character.birth_year}</p>
+          <p>Домашняя планета: {character.homeworld}</p>
+        </StyledText>
       </StyledContainer>
     </>
   );

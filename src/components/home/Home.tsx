@@ -3,6 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import styled from "styled-components";
+import { IHistory } from "../../../pages/character/[id]";
 import CharacterItem from "./CharacterItem";
 
 
@@ -14,9 +15,6 @@ const StyledContent = styled.div`
   text-align: center;
 `;
 
-export interface IHistory {
-  id: string;
-}
 
 
 
@@ -34,11 +32,11 @@ const Home: FC = () => {
 
   return (
     <>
-      <StyledH>История просмотра</StyledH>
+      <StyledH>История просмотра:</StyledH>
 
       {history.map((h: IHistory, key) => (
-        <StyledContent>
-          <CharacterItem key={h.id} id={h.id} />
+        <StyledContent key={h.id}>
+          <CharacterItem  {...h} />
         </StyledContent>
       ))}
     </>
