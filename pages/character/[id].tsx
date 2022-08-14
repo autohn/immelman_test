@@ -35,23 +35,31 @@ export interface IHistory {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch("https://swapi.dev/api/people/");
-  const data = await res.json();
+  let res = await fetch("https://swapi.dev/api/people/");
+  let data = await res.json();
 
-  /*   const paths = data.results.map((character: any) => {
+  let paths = data.results.map((character: any) => {
     return {
       params: { id: character.url.replace(/[^0-9]/g, "") },
     };
-  }); */
-
-  const paths = Array.from(Array(10).keys(), (x) => {
-    //поставить data.count.toStering()
-    return {
-      params: {
-        id: (x + 1).toString(),
-      },
-    };
   });
+
+  while (data.next) {
+    res = await fetch(data.next);
+    data = await res.json();
+
+    console.log("запрос" + data.next);
+
+    let newpath = data.results.map((character: any) => {
+      return {
+        params: { id: character.url.replace(/[^0-9]/g, "") },
+      };
+    });
+
+    paths = paths.concat(newpath);
+  }
+
+  /*  const paths = [{ params: { id: "1" } }, { params: { id: "2" } }]; */
 
   return { paths, fallback: "blocking" };
 };
@@ -64,9 +72,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const yandeximages = require("yandex-images");
   yandeximages.Search(data.name, false, function (url: any) {
     data.imgurl = url;
+    console.log(url);
   });
   while (!data.imgurl) {
-    await new Promise((resolve) => setTimeout(resolve, 100)); //TODO как-то нормально можно?
+    await new Promise((resolve) => setTimeout(resolve, 2000)); //TODO как-то нормально можно?
   }
 
   const homeworldres = await fetch(data.homeworld);
