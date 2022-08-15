@@ -67,10 +67,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const res = await fetch("https://swapi.dev/api/people/" + id);
   const data: ICharacter = await res.json();
 
-  await new Promise(
+  /*   await new Promise(
     (resolve) => setTimeout(resolve, parseInt(id + "00")) //TODO временный костыль чтобы при сборке яндекс картинки не переставали отвечать изза большого количества параллельных запросов
   );
-
+ */
   const yandeximages = require("yandex-images");
 
   data.imgurl = await new Promise((resolve) =>
