@@ -8,6 +8,9 @@ const nextConfig = {
   images: {
     domains: ["avatars.mds.yandex.net"],
   },
+  env: {
+    MY_SECRET_TOKEN: process.env.MY_SECRET_TOKEN,
+  },
 };
 
 module.exports = nextConfig;
