@@ -35,7 +35,7 @@ const CharacterItem: FC<IHistory> = ({ id, name, img }) => {
         <a>
           <ImageWrap>
             <Image
-              src={img == "https:undefined" ? "" : img}
+              src={img == "https:undefined" ? "/personn.png" : img} //TODO переделать нормально
               alt={name}
               layout={"fill"}
               objectFit={"contain"}

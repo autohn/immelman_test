@@ -69,14 +69,17 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const res = await fetch("https://swapi.dev/api/people/" + id);
   const data: ICharacter = await res.json();
 
+  await new Promise(
+    (resolve) => setTimeout(resolve, Math.floor(Math.random() * 120000)) //TODO временный костыль чтобы при сборке яндекс картинки не переставали отвечать изза большого количества параллельных запросов
+  );
+
   const yandeximages = require("yandex-images");
-  yandeximages.Search(data.name, false, function (url: any) {
-    data.imgurl = url;
-    console.log(url);
-  });
-  while (!data.imgurl) {
-    await new Promise((resolve) => setTimeout(resolve, 2000)); //TODO как-то нормально можно?
-  }
+
+  data.imgurl = await new Promise((resolve) =>
+    yandeximages.Search(data.name, false, function (url: any) {
+      resolve(url);
+    })
+  );
 
   const homeworldres = await fetch(data.homeworld);
   const homeworld = await homeworldres.json();
@@ -84,7 +87,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   return {
     props: { character: data, id: id },
-    revalidate: 300,
+    /*     revalidate: 300, */
     notFound: data.name ? false : true,
   };
 };
@@ -98,7 +101,7 @@ export default function PeopleId({
 }) {
   const imgurl = character.imgurl.includes("avatars.mds.yandex.net")
     ? character.imgurl
-    : "/sw_big.png";
+    : "/personn.png";
 
   //const router = useRouter();
   //let sv = router.query.id;
@@ -109,11 +112,11 @@ export default function PeopleId({
     );
 
     if (!History.find((x) => x.id == id)) {
-      History.push({ id: id, name: character.name, img: character.imgurl });
+      History.push({ id: id, name: character.name, img: imgurl });
     }
 
     sessionStorage.setItem("History", JSON.stringify(History));
-  }, [character.imgurl, character.name, id]);
+  }, [imgurl, character.name, id]);
 
   return (
     <>
