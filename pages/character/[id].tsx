@@ -48,8 +48,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
     res = await fetch(data.next);
     data = await res.json();
 
-    console.log("запрос" + data.next);
-
     let newpath = data.results.map((character: any) => {
       return {
         params: { id: character.url.replace(/[^0-9]/g, "") },
