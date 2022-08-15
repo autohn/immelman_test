@@ -70,7 +70,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const data: ICharacter = await res.json();
 
   await new Promise(
-    (resolve) => setTimeout(resolve, Math.floor(Math.random() * 120000)) //TODO временный костыль чтобы при сборке яндекс картинки не переставали отвечать изза большого количества параллельных запросов
+    (resolve) => setTimeout(resolve, Math.floor(Math.random() * 50000)) //TODO временный костыль чтобы при сборке яндекс картинки не переставали отвечать изза большого количества параллельных запросов
   );
 
   const yandeximages = require("yandex-images");
