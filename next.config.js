@@ -11,6 +11,10 @@ const nextConfig = {
   env: {
     MY_SECRET_TOKEN: process.env.MY_SECRET_TOKEN,
   },
+  experimental: {
+    workerThreads: false,
+    cpus: 1,
+  },
 };
 
 module.exports = nextConfig;

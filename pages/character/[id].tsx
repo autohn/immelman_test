@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import { relative } from "path";
+import axios from "axios";
+import rateLimit from "axios-rate-limit";
 
 const StyledContainer = styled.div`
   text-align: center;
@@ -59,6 +61,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   /*  const paths = [{ params: { id: "1" } }, { params: { id: "2" } }]; */
 
+  /*   let [, p] = Object.entries(paths)[0];
+  paths = [p]; */
+
+  //paths = [[...paths][0], [...paths][1], [...paths][2]]; //TODO для теста, удалить
+
+  console.log(paths);
+
   return { paths, fallback: "blocking" };
 };
 
@@ -66,19 +75,42 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const id = context.params?.id;
   const res = await fetch("https://swapi.dev/api/people/" + id);
   const data: ICharacter = await res.json();
-
+  console.log(id);
   /*   await new Promise(
     (resolve) => setTimeout(resolve, parseInt(id + "00")) //TODO временный костыль чтобы при сборке яндекс картинки не переставали отвечать изза большого количества параллельных запросов
   );
  */
-  const yandeximages = require("yandex-images");
 
-  data.imgurl = await new Promise((resolve) =>
-    yandeximages.Search(data.name, true, function (url: any) {
-      resolve(url);
-      console.log(url);
-    })
-  );
+  const cheerio = require("cheerio");
+  var url =
+    "https://yandex.com.tr/gorsel/search?text=" + data.name + "&family=yes";
+
+  const getUrl = (): Promise<string> => {
+    return new Promise((resolve) => {
+      const ax = rateLimit(axios.create(), {
+        maxRequests: 1,
+        perMilliseconds: 1000,
+      });
+      ax.get(url).then((response) => {
+        let $ = cheerio.load(response.data);
+        let imgurl: string = "https:" + $(".serp-item__thumb").attr("src");
+        console.log(imgurl);
+        resolve(imgurl);
+      });
+    });
+  };
+
+  data.imgurl = await getUrl();
+
+  /*   for (let i = 0; i < 9; i++) {
+    if (data.imgurl == "https:undefined") {
+      data.imgurl = await new Promise<string>((resolve) => {
+        setTimeout(() => {
+          resolve(getUrl());
+        }, 1000);
+      });
+    }
+  } */
 
   const homeworldres = await fetch(data.homeworld);
   const homeworld = await homeworldres.json();
