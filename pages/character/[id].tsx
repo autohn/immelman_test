@@ -75,11 +75,13 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const id = context.params?.id;
   const res = await fetch("https://swapi.dev/api/people/" + id);
   const data: ICharacter = await res.json();
-  console.log(id);
-  /*   await new Promise(
-    (resolve) => setTimeout(resolve, parseInt(id + "00")) //TODO временный костыль чтобы при сборке яндекс картинки не переставали отвечать изза большого количества параллельных запросов
-  );
- */
+
+  const fs = require("fs");
+  const yapath = "./yaurls.json";
+
+  if (!fs.existsSync(yapath)) {
+    fs.writeFileSync(yapath, JSON.stringify([]), "utf8");
+  }
 
   const cheerio = require("cheerio");
   var url =
@@ -94,6 +96,39 @@ export const getStaticProps: GetStaticProps = async (context) => {
       ax.get(url).then((response) => {
         let $ = cheerio.load(response.data);
         let imgurl: string = "https:" + $(".serp-item__thumb").attr("src");
+
+        if (imgurl == "https:undefined") {
+          //TODO привести в порядок, блок для яндекс картинок
+          fs.readFile(yapath, "utf8", (err: any, data: any) => {
+            let obj = JSON.parse(data);
+
+            const indexOfItemInArray = obj.table.findIndex(
+              (q: any) => q.id === id
+            );
+
+            if (indexOfItemInArray > -1) {
+              imgurl = obj.table[indexOfItemInArray].square;
+            }
+          });
+        } else {
+          fs.readFile(yapath, "utf8", (err: any, data: any) => {
+            let obj = JSON.parse(data);
+            let new_item = { id: id, imgurl: imgurl };
+
+            const indexOfItemInArray = obj.table.findIndex(
+              (q: any) => q.id === new_item.id
+            );
+
+            if (indexOfItemInArray > -1) {
+              obj.table[indexOfItemInArray] = new_item;
+            } else {
+              obj.table.push(new_item);
+            }
+
+            fs.writeFileSync(yapath, JSON.stringify(obj), "utf8");
+          });
+        }
+
         console.log(imgurl);
         resolve(imgurl);
       });
